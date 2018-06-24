@@ -14,7 +14,8 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int activePlayer = 1;
+    private int playMode = 0;
+    private int gameState = 1;
     private List<Integer> player1Moves = new ArrayList<>();
     private List<Integer> player2Moves = new ArrayList<>();
 
@@ -23,6 +24,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    public void restart(View view) {
+        player1Moves.clear();
+        player2Moves.clear();
+        gameState = 1;
+        clearAllButtons();
+    }
+
+    private void clearAllButtons() {
+        for (int i = 1; i <= 9; i++) {
+            Button button = (Button) findViewById(getResources().getIdentifier("button" + i, "id",
+                    this.getPackageName()));
+            button.setBackgroundResource(android.R.drawable.btn_default);
+            button.setEnabled(true);
+        }
     }
 
     public void btnClick(View view) {
@@ -63,72 +80,70 @@ public class MainActivity extends AppCompatActivity {
         playGame(cellId, btnSelected);
     }
 
-
     private void playGame(int cellId, Button btnSelected) {
-        if (activePlayer == 1) {
-            btnSelected.setBackgroundColor(Color.RED);
-            player1Moves.add(cellId);
-            activePlayer = 2;
-            AImove();
-        } else {
-            btnSelected.setBackgroundColor(Color.GREEN);
-            player2Moves.add(cellId);
-            activePlayer = 1;
+        if (gameState == 1) {
+            switch (playMode) {
+                case 0: // weak AI
+                    playWeakAI(cellId, btnSelected);
+                    break;
+                case 1: // strong AI
+                    break;
+                case 2: // online
+                    break;
+            }
         }
+    }
+
+    // start weak AI
+    private void playWeakAI(int cellId, Button btnSelected) {
+        if (gameState == 0) {
+            return;
+        }
+        btnSelected.setBackgroundColor(Color.RED);
+        player1Moves.add(cellId);
+        Log.d("Player: ", player1Moves.toString());
+
+        checkWinner();
+        if (gameState == 0) {
+            return;
+        }
+        randomAImove();
         btnSelected.setEnabled(false);
         checkWinner();
     }
 
-    private void checkWinner() {
-        int winner = -1;
-
-        if (player1Moves.contains(1) && player1Moves.contains(2) && player1Moves.contains(3))
-            winner = 1;
-        if (player2Moves.contains(1) && player2Moves.contains(2) && player2Moves.contains(3))
-            winner = 2;
-
-        if (player1Moves.contains(4) && player1Moves.contains(5) && player1Moves.contains(6))
-            winner = 1;
-        if (player2Moves.contains(4) && player2Moves.contains(5) && player2Moves.contains(6))
-            winner = 2;
-
-        if (player1Moves.contains(7) && player1Moves.contains(8) && player1Moves.contains(9))
-            winner = 1;
-        if (player2Moves.contains(7) && player2Moves.contains(8) && player2Moves.contains(9))
-            winner = 2;
-
-        if (player1Moves.contains(1) && player1Moves.contains(5) && player1Moves.contains(9))
-            winner = 1;
-        if (player2Moves.contains(1) && player2Moves.contains(5) && player2Moves.contains(9))
-            winner = 2;
-
-        if (player1Moves.contains(3) && player1Moves.contains(5) && player1Moves.contains(7))
-            winner = 1;
-        if (player2Moves.contains(3) && player2Moves.contains(5) && player2Moves.contains(7))
-            winner = 2;
-
-        if (winner != -1) {
-            if (winner == 1) {
-                Toast.makeText(this, "Player 1 wins!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Player 2 wins!", Toast.LENGTH_LONG).show();
+    // get available cells to put new tiles
+    private List<Integer> getAvailableCells() {
+        // get the available cells
+        List<Integer> availableCells = new ArrayList<>();
+        for (int cellId = 1; cellId < 10; cellId++) {
+            if (!(player1Moves.contains(cellId) || player2Moves.contains(cellId))) {
+                availableCells.add(cellId);
             }
         }
+
+        Log.d("available cells: ", availableCells.toString());
+
+        return availableCells;
     }
 
     // random AI
-    private void AImove() {
-        List<Integer> emptyCells = new ArrayList<>();
-        for (int cellId = 1; cellId < 10; cellId++) {
-            if (!(player1Moves.contains(cellId) || player2Moves.contains(cellId))) {
-                emptyCells.add(cellId);
-            }
-        }
+    private void randomAImove() {
+        // get available cells
+        List<Integer> availableCells = getAvailableCells();
+        // get the random position
         Random random = new Random();
-        int randomIndex = random.nextInt(emptyCells.size());
-        int randomCell = emptyCells.get(randomIndex);
+        int randomIndex = random.nextInt(availableCells.size());
+        int randomCell = availableCells.get(randomIndex);
+        player2Moves.add(randomCell);
+        Log.d("AI: ", player2Moves.toString());
+        setAImoveColor(randomCell);
+    }
+
+    // AI puts the tile down on board
+    private void setAImoveColor(int cellIndex) {
         Button btnSelected = null;
-        switch (randomCell) {
+        switch (cellIndex) {
             case 1:
                 btnSelected = (Button) findViewById(R.id.button1);
                 break;
@@ -160,8 +175,62 @@ public class MainActivity extends AppCompatActivity {
                 btnSelected = null;
                 break;
         }
-        playGame(randomCell, btnSelected);
+        btnSelected.setBackgroundColor(Color.GREEN);
+        btnSelected.setEnabled(false);
     }
+
+    private void checkWinner() {
+        int winner = -1;
+
+        if (player1Moves.contains(1) && player1Moves.contains(2) && player1Moves.contains(3))
+            winner = 0;
+        if (player1Moves.contains(4) && player1Moves.contains(5) && player1Moves.contains(6))
+            winner = 0;
+        if (player1Moves.contains(7) && player1Moves.contains(8) && player1Moves.contains(9))
+            winner = 0;
+        if (player1Moves.contains(1) && player1Moves.contains(5) && player1Moves.contains(9))
+            winner = 0;
+        if (player1Moves.contains(3) && player1Moves.contains(5) && player1Moves.contains(7))
+            winner = 0;
+        if (player1Moves.contains(1) && player1Moves.contains(4) && player1Moves.contains(7))
+            winner = 0;
+        if (player1Moves.contains(2) && player1Moves.contains(5) && player1Moves.contains(8))
+            winner = 0;
+        if (player1Moves.contains(3) && player1Moves.contains(6) && player1Moves.contains(9))
+            winner = 0;
+
+
+        if (player2Moves.contains(1) && player2Moves.contains(2) && player2Moves.contains(3))
+            winner = 1;
+        if (player2Moves.contains(4) && player2Moves.contains(5) && player2Moves.contains(6))
+            winner = 1;
+        if (player2Moves.contains(7) && player2Moves.contains(8) && player2Moves.contains(9))
+            winner = 1;
+        if (player2Moves.contains(1) && player2Moves.contains(5) && player2Moves.contains(9))
+            winner = 1;
+        if (player2Moves.contains(3) && player2Moves.contains(5) && player2Moves.contains(7))
+            winner = 1;
+        if (player2Moves.contains(1) && player2Moves.contains(4) && player2Moves.contains(7))
+            winner = 1;
+        if (player2Moves.contains(2) && player2Moves.contains(5) && player2Moves.contains(8))
+            winner = 1;
+        if (player2Moves.contains(3) && player2Moves.contains(6) && player2Moves.contains(9))
+            winner = 1;
+
+        if (winner != -1) {
+            if (winner == 0) {
+                Toast.makeText(this, "Player red wins!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Player green wins!", Toast.LENGTH_LONG).show();
+            }
+            gameState = 0;
+        } else if (player1Moves.size() + player2Moves.size() >= 9) {
+            Toast.makeText(this, "Tie", Toast.LENGTH_LONG).show();
+            gameState = 0;
+        }
+    }
+
+
 
     //TODO: make a good AI with minimax algorithm
 }
