@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 1; i <= 9; i++) {
             Button button = (Button) findViewById(getResources().getIdentifier("button" + i, "id",
                     this.getPackageName()));
-            button.setBackgroundResource(android.R.drawable.btn_default);
+            button.setBackgroundColor(Color.LTGRAY);
             button.setEnabled(true);
         }
     }
