@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="3">
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/tableLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="4"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".OnlineActivity">
+
+            <TableRow
+                style="?attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button10"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button11"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button12"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                style="?attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button13"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button14"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button15"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                style="?attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button16"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button17"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/button18"
+                    android:layout_width="50pt"
+                    android:layout_height="50pt"
+                    android:layout_margin="3dp"
+                    android:onClick="btnClick"
+                    android:text="" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_weight="1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:paddingVertical="20dp">
+
+        <EditText
+            android:id="@+id/friendEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:id="@+id/inviteButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="invite" />
+
+        <Button
+            android:id="@+id/acceptButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="accept" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_weight="1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:paddingVertical="20dp">
+
+        <EditText
+            android:id="@+id/userEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="login" />
+    </LinearLayout>
+
+</LinearLayout>
