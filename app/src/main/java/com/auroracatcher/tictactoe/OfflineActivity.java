@@ -1,9 +1,11 @@
 package com.auroracatcher.tictactoe;
 
 import android.graphics.Color;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class OfflineActivity extends AppCompatActivity {
 
     private int playMode = 0;
     private int gameState = 1;
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_offline);
     }
 
     public void restart(View view) {
@@ -103,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
         player1Moves.add(cellId);
         Log.d("Player: ", player1Moves.toString());
 
-        checkWinner();
+        displayWinner(checkWinner());
         if (gameState == 0) {
             return;
         }
         randomAImove();
         btnSelected.setEnabled(false);
-        checkWinner();
+        displayWinner(checkWinner());
     }
 
     // get available cells to put new tiles
@@ -179,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         btnSelected.setEnabled(false);
     }
 
-    private void checkWinner() {
+    private int checkWinner() {
         int winner = -1;
 
         if (player1Moves.contains(1) && player1Moves.contains(2) && player1Moves.contains(3))
@@ -217,11 +219,15 @@ public class MainActivity extends AppCompatActivity {
         if (player2Moves.contains(3) && player2Moves.contains(6) && player2Moves.contains(9))
             winner = 1;
 
+        return winner;
+    }
+
+    private void displayWinner(int winner) {
         if (winner != -1) {
             if (winner == 0) {
-                Toast.makeText(this, "Player red wins!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You win!", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Player green wins!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You lose!", Toast.LENGTH_LONG).show();
             }
             gameState = 0;
         } else if (player1Moves.size() + player2Moves.size() >= 9) {
@@ -229,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
             gameState = 0;
         }
     }
-
 
 
     //TODO: make a good AI with minimax algorithm
