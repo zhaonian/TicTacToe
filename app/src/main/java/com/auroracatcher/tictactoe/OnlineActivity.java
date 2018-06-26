@@ -15,6 +15,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class OnlineActivity extends AppCompatActivity {
 
@@ -25,6 +27,10 @@ public class OnlineActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
     private FirebaseAuth mAuth;
     private String myEmail;
+
+    // Write a message to the database
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,10 @@ public class OnlineActivity extends AppCompatActivity {
                                 myEmail = user.getEmail();
                                 loginButton.setEnabled(false);
                                 userEmail.setText(myEmail);
+
+                                // because character @ wont be accepted
+                                myRef.child("Users").child(getUserBeforeAt(myEmail)).child("Request").setValue(user.getUid());
+
                             }
                         } else {
                             // If sign in fails, display a message to the user.
@@ -68,6 +78,11 @@ public class OnlineActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private String getUserBeforeAt(String email) {
+        String[] splits = email.split("@");
+        return splits[0];
     }
 
     public void loginClick(View view) {
