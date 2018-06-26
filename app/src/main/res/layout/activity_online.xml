@@ -148,6 +148,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="inviteClick"
             android:text="invite" />
 
         <Button
@@ -155,6 +156,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="acceptClick"
             android:text="accept" />
     </LinearLayout>
 
@@ -180,6 +182,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="loginClick"
             android:text="login" />
     </LinearLayout>
 
