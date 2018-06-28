@@ -44,7 +44,7 @@ public class OfflineActivity extends AppCompatActivity {
 
     public void btnClick(View view) {
         Button btnSelected = (Button) view;
-        int cellId = -1;
+        int cellId;
         switch (btnSelected.getId()) {
             case R.id.button1:
                 cellId = 1;

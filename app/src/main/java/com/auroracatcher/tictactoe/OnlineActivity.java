@@ -22,7 +22,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class OnlineActivity extends AppCompatActivity {
 
@@ -37,6 +40,10 @@ public class OnlineActivity extends AppCompatActivity {
     private String myEmail;
     private String myId;
     private String gameSessionId;
+    private int activePlayer = 1; // 1 - first, 2 - second
+    private List<Integer> player1Moves = new ArrayList<>();
+    private List<Integer> player2Moves = new ArrayList<>();
+
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -125,7 +132,7 @@ public class OnlineActivity extends AppCompatActivity {
                             Log.d("ha", td.get(key).toString());
                             value = td.get(key).toString();
                             friendEmail.setText(value);
-                            inviteButton.setBackgroundColor(Color.GREEN);
+                            friendEmail.setBackgroundColor(Color.GREEN);
                             myRef.child("Users").child(getUserBeforeAt(myEmail)).child("Request").setValue(myId);
                             break; // TODO: why break?
                         }
@@ -146,6 +153,43 @@ public class OnlineActivity extends AppCompatActivity {
     public void startGame(String gameId) {
         gameSessionId = gameId;
         myRef.child("Playing").child(gameId).removeValue();
+
+        myRef.child("Playing").child(getUserBeforeAt(gameId)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                try {
+                    player1Moves.clear();
+                    player2Moves.clear();
+                    activePlayer = 2;
+                    HashMap<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
+                    if (td != null) {
+                        String value;
+                        String firstPlayer = getUserBeforeAt(myEmail);
+                        for (String key : td.keySet()) {
+                            value = td.get(key).toString();
+                            if (!value.equals(firstPlayer)) {
+                                activePlayer = activePlayer == 2 ? 1 : 2;
+                            }
+                            firstPlayer = value;
+                            String[] splitId = key.split(":");
+                            Log.d("wo", splitId[1]);
+                            friendMove(Integer.parseInt(splitId[1]));
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.d("exc", ex.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("request", "Failed to read value.", error.toException());
+            }
+        });
     }
 
     public void acceptClick(View view) {
@@ -159,7 +203,7 @@ public class OnlineActivity extends AppCompatActivity {
             return;
         }
         Button btnSelected = (Button) view;
-        int cellId = -1;
+        int cellId;
         switch (btnSelected.getId()) {
             case R.id.button10:
                 cellId = 1;
@@ -195,6 +239,112 @@ public class OnlineActivity extends AppCompatActivity {
         myRef.child("Playing").child(gameSessionId).child("CellID:" + cellId).setValue(getUserBeforeAt(myEmail));
     }
 
+    private void playGame(int cellId, Button selectedButton) {
+        if (activePlayer == 1) {
+            selectedButton.setBackgroundColor(Color.BLUE);
+            player1Moves.add(cellId);
+        } else if (activePlayer == 2) {
+            selectedButton.setBackgroundColor(Color.RED);
+            player2Moves.add(cellId);
+        }
+        selectedButton.setEnabled(false);
+        displayWinner(checkWinner());
+    }
+
+    // friend makes move
+    private void friendMove(int cellId) {
+        setBtnColor(cellId);
+    }
+
+    private int checkWinner() {
+        int winner = -1;
+
+        if (player1Moves.contains(1) && player1Moves.contains(2) && player1Moves.contains(3))
+            winner = 0;
+        if (player1Moves.contains(4) && player1Moves.contains(5) && player1Moves.contains(6))
+            winner = 0;
+        if (player1Moves.contains(7) && player1Moves.contains(8) && player1Moves.contains(9))
+            winner = 0;
+        if (player1Moves.contains(1) && player1Moves.contains(5) && player1Moves.contains(9))
+            winner = 0;
+        if (player1Moves.contains(3) && player1Moves.contains(5) && player1Moves.contains(7))
+            winner = 0;
+        if (player1Moves.contains(1) && player1Moves.contains(4) && player1Moves.contains(7))
+            winner = 0;
+        if (player1Moves.contains(2) && player1Moves.contains(5) && player1Moves.contains(8))
+            winner = 0;
+        if (player1Moves.contains(3) && player1Moves.contains(6) && player1Moves.contains(9))
+            winner = 0;
+
+
+        if (player2Moves.contains(1) && player2Moves.contains(2) && player2Moves.contains(3))
+            winner = 1;
+        if (player2Moves.contains(4) && player2Moves.contains(5) && player2Moves.contains(6))
+            winner = 1;
+        if (player2Moves.contains(7) && player2Moves.contains(8) && player2Moves.contains(9))
+            winner = 1;
+        if (player2Moves.contains(1) && player2Moves.contains(5) && player2Moves.contains(9))
+            winner = 1;
+        if (player2Moves.contains(3) && player2Moves.contains(5) && player2Moves.contains(7))
+            winner = 1;
+        if (player2Moves.contains(1) && player2Moves.contains(4) && player2Moves.contains(7))
+            winner = 1;
+        if (player2Moves.contains(2) && player2Moves.contains(5) && player2Moves.contains(8))
+            winner = 1;
+        if (player2Moves.contains(3) && player2Moves.contains(6) && player2Moves.contains(9))
+            winner = 1;
+
+        return winner;
+    }
+
+    private void displayWinner(int winner) {
+        if (winner != -1) {
+            if (winner == 1) {
+                Toast.makeText(this, "1 win!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "2 win!", Toast.LENGTH_LONG).show();
+            }
+        } else if (player1Moves.size() + player2Moves.size() >= 9) {
+            Toast.makeText(this, "Tie", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setBtnColor(int cellIndex) {
+        Button btnSelected;
+        switch (cellIndex) {
+            case 1:
+                btnSelected = (Button) findViewById(R.id.button10);
+                break;
+            case 2:
+                btnSelected = (Button) findViewById(R.id.button11);
+                break;
+            case 3:
+                btnSelected = (Button) findViewById(R.id.button12);
+                break;
+            case 4:
+                btnSelected = (Button) findViewById(R.id.button13);
+                break;
+            case 5:
+                btnSelected = (Button) findViewById(R.id.button14);
+                break;
+            case 6:
+                btnSelected = (Button) findViewById(R.id.button15);
+                break;
+            case 7:
+                btnSelected = (Button) findViewById(R.id.button16);
+                break;
+            case 8:
+                btnSelected = (Button) findViewById(R.id.button17);
+                break;
+            case 9:
+                btnSelected = (Button) findViewById(R.id.button18);
+                break;
+            default:
+                btnSelected = null;
+                break;
+        }
+        playGame(cellIndex, btnSelected);
+    }
 
     public void restart(View view) {
     }
