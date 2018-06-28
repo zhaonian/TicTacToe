@@ -36,6 +36,7 @@ public class OnlineActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String myEmail;
     private String myId;
+    private String gameSessionId;
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -80,7 +81,7 @@ public class OnlineActivity extends AppCompatActivity {
 
                                 // because character @ wont be accepted
                                 myRef.child("Users").child(getUserBeforeAt(myEmail)).child("Request").setValue(user.getUid());
-
+                                incomingRequestListener();
                             }
                         } else {
                             // If sign in fails, display a message to the user.
@@ -105,11 +106,12 @@ public class OnlineActivity extends AppCompatActivity {
     public void inviteClick(View view) {
         Log.d("invite", friendEmail.getText().toString());
         myRef.child("Users").child(getUserBeforeAt(friendEmail.getText().toString())).child("Request").push().setValue(myEmail);
+        startGame(getUserBeforeAt(friendEmail.getText().toString()) + ":" + getUserBeforeAt(myEmail));
     }
 
     public void incomingRequestListener() {
         // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.child("Users").child(getUserBeforeAt(myEmail)).child("Request").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -120,7 +122,8 @@ public class OnlineActivity extends AppCompatActivity {
                     if (td != null) {
                         String value;
                         for (String key : td.keySet()) {
-                            value = (String) td.get(key);
+                            Log.d("ha", td.get(key).toString());
+                            value = td.get(key).toString();
                             friendEmail.setText(value);
                             inviteButton.setBackgroundColor(Color.GREEN);
                             myRef.child("Users").child(getUserBeforeAt(myEmail)).child("Request").setValue(myId);
@@ -128,7 +131,7 @@ public class OnlineActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception ex) {
-
+                    Log.d("exc", ex.getMessage());
                 }
             }
 
@@ -140,12 +143,58 @@ public class OnlineActivity extends AppCompatActivity {
         });
     }
 
+    public void startGame(String gameId) {
+        gameSessionId = gameId;
+        myRef.child("Playing").child(gameId).removeValue();
+    }
+
     public void acceptClick(View view) {
         Log.d("accept", friendEmail.getText().toString());
+        myRef.child("Users").child(getUserBeforeAt(friendEmail.getText().toString())).child("Request").push().setValue(myEmail);
+        startGame(getUserBeforeAt(myEmail) + ":" + getUserBeforeAt(friendEmail.getText().toString()));
     }
 
     public void btnClick(View view) {
+        if (gameSessionId == null) { // no game started yet
+            return;
+        }
+        Button btnSelected = (Button) view;
+        int cellId = -1;
+        switch (btnSelected.getId()) {
+            case R.id.button10:
+                cellId = 1;
+                break;
+            case R.id.button11:
+                cellId = 2;
+                break;
+            case R.id.button12:
+                cellId = 3;
+                break;
+            case R.id.button13:
+                cellId = 4;
+                break;
+            case R.id.button14:
+                cellId = 5;
+                break;
+            case R.id.button15:
+                cellId = 6;
+                break;
+            case R.id.button16:
+                cellId = 7;
+                break;
+            case R.id.button17:
+                cellId = 8;
+                break;
+            case R.id.button18:
+                cellId = 9;
+                break;
+            default:
+                cellId = -1;
+                break;
+        }
+        myRef.child("Playing").child(gameSessionId).child("CellID:" + cellId).setValue(getUserBeforeAt(myEmail));
     }
+
 
     public void restart(View view) {
     }
